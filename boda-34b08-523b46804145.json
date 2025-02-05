@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "boda-34b08",
+  "private_key_id": "bcde160037794301f80745a621e666cda26e833a",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDJc13KubgGIAVK\nskNZs8kd8PWYaLG4CiheVa+dFC089JOYIBn4zOU0xQoDnmFKm4L+jKscmizkhqN9\nH2nqzgtOcKNEdxtrkAsc/h1P5islI0ErO19ypoC7YNxEy/QVGPefF6aQnzykOnUQ\njJ/wSa21fy995Ny9FnOrHUF4n6oC1kXv0mX3f/Xp8q+HsvcQDwtSL0ylKX+sgzu0\nR/D19EIGgpok7jyIutE2vmSoxrqRFdb6ogZmmaafPTaFuQup48uqVFRis0fQQMgp\nd5jjjarvjgdexAMABYKmY9cAr9dPqAIhLH02lR0cv24iZrH+ePYR1fgjApVEaEgV\n6OOTO1YFAgMBAAECggEACtYJEUbQqomt5zD0FP7p/lGQEGjvSFhJiBuBVQh5D3qT\ndt8hLoQs/xvrODscfiQj1XfxG1qCuC8y25/lNWNsccV2zs++WpiWtHJJ1tqpbve4\nwW/R6EujCJFC//Ndl4XuifD+fXCHVUkss11xG/6GmMj038eABS7QPX/XHfsurLTL\n2R7e11qyRx/oetlt7WeKh+PlJpHFsP53DjKowUSt9ZripbNJMoRySNzOEUoK2Mmt\nJXN+y/d6BmNrlEf4vG+5/WMVnL6MGzbUDJL4PKXtg/g7IekKm+KH9jY6tA6PjNvd\n3efHmRh6sBiDueE0f8w/oQjmkVbshMOIv3csmE1Q6QKBgQD/ExGkvVV0sU2jvzMW\n5bAuibvkETvwjQZA9hILLwyJs7BCkGVHv7WH1sBaugUPVjaSwGj4Xb09aD8ZAs0j\nDclJ44si9RdnozXTRWEsGElStsQTW4no6lwKq4dPzm7YQWETceqGZkTrbLkNrB8G\nSltBVj0uGbUQr1cwwiLwwxgcTQKBgQDKLnzlKENCHDgS3O4goHzSjHkR35WZO+g7\n7MMJM79hvbW65glV9rSoWzYNHvxVybZCflRE2LaBJw6Hjolvoh2P8nX4x5chRywW\nie4GuDFJ1SNEX5XtW0/CUvh+GSBv5LDLXz01E0xzqA71cpAwhgDPF0/7MzkDanQp\nIxZ/JqIcmQKBgQDG6nQD6LLPwcUuQVjyLkTqxfaEsPvxZ8jMuBjyJ8q7SCnYfwq8\nnUBPoqV3G0H+59i/MNWrek6tqLIsKwcWoxWqTYyfwkpyQ9Eh5SUWYgosOuNFxUkT\nHlCQ8ZsgHXhLpRCzPU8LaI2umqblhqjbGvl3Rm2Hmfyd+l8gYwUkhMA0sQKBgGAi\nfqyP2ntC477EYk4NQYzz0lWXVJDKFYD48Twc6PFWvWSjIOlJJ1muFSNkCmPYR9uS\nKguaaB09LwFx2xPDp/7cMRAcB1aBews0hoOXbYhH2j8WnDmCY4ho31NGK1BJE2+A\nV6A3DvEnhgVbdgg8j4Ho+dTd5EwlgBpXXskS255xAoGBAOphZFYoMracoUz9se6N\nK/LnOzCt8xN6AVuzECLa+P9/awibgiLdy/T9LmNvP9tNJ+R7jxa6rT4DdtjesZZm\nwLmNcmBR9SimH3xQ99/WuVncL/Q6p2poPp6uPdXaZiCezVIo681Lf8Q0CY0UNkOh\n14SHjwWPdAm5KfYJIFE4TDmW\n-----END PRIVATE KEY-----\n",
+  "client_email": "configstorageboda@boda-34b08.iam.gserviceaccount.com",
+  "client_id": "113204193347488595428",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/configstorageboda%40boda-34b08.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}
