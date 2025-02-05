@@ -4,10 +4,8 @@ const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
 require('dotenv').config();
-
 const http = require('http');
 const socketIo = require('socket.io');
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
@@ -100,14 +98,12 @@ const io = socketIo(server, {
     }
 });
 
-// Configuración de CORS para Express
-app.use(cors({
-    origin: 'http://localhost:4200/', // Cambia esto al origen de tu frontend
-    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-    optionsSuccessStatus: 204 // Para navegadores antiguos
-}));
-
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    next();
+  });
 // Configuración de Content Security Policy (CSP)
 // app.use((req, res, next) => {
 //     res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval';"); // Ajusta según tus necesidades
