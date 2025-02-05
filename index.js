@@ -85,9 +85,16 @@ return ret;
 
 
 // Configuración de CORS para Socket.IO
+// const io = socketIo(server, {
+//     cors: {
+//         origin: 'https://powderblue-donkey-924959.hostingersite.com', // Cambia esto al origen de tu frontend
+//         methods: ['GET', 'POST'],
+//         credentials: true // Si necesitas enviar cookies o encabezados de autorización
+//     }
+// });
 const io = socketIo(server, {
     cors: {
-        origin: 'https://powderblue-donkey-924959.hostingersite.com/', // Cambia esto al origen de tu frontend
+        origin: 'http://localhost:4200/', // Cambia esto al origen de tu frontend
         methods: ['GET', 'POST'],
         credentials: true // Si necesitas enviar cookies o encabezados de autorización
     }
@@ -95,7 +102,7 @@ const io = socketIo(server, {
 
 // Configuración de CORS para Express
 app.use(cors({
-    origin: 'https://powderblue-donkey-924959.hostingersite.com/', // Cambia esto al origen de tu frontend
+    origin: 'http://localhost:4200/', // Cambia esto al origen de tu frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204 // Para navegadores antiguos
