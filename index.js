@@ -117,12 +117,12 @@ io.on('connection', (socket) => {
 });
 
 app.use(express.json());
-app.use('/', express.static(path.join(__dirname, './')));
+app.use('/uploads', express.static(path.join(__dirname, './uploads')));
 
 // Configuración de multer para la carga de archivos
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, '/');
+        cb(null, '/uploads');
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname)); // Agrega un timestamp al nombre del archivo
