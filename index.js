@@ -135,38 +135,19 @@ const upload = multer({ storage: storage });
 
 
 // Endpoint para subir fotos
-// app.post('/upload', upload.single('photo'), (req, res) => {
-//     if (!req.file) {
-//         return res.status(400).send('No se ha subido ninguna foto.');
-//     }
- 
-//     uploadFile(process.env.BUCKETNAME,`./uploads/${req.file.filename}`,req.file.filename);
-
-//     const filePath = `/uploads/${req.file.filename}`;
-//     io.emit('receiveImage', `http://localhost:${PORT}${filePath}`);
-    
-//     res.status(200).json({ filePath });
-// });
-
-
 app.post('/upload', upload.single('photo'), (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).send('No se ha subido ninguna foto.');
-        }
-
-        // Lógica para manejar la carga de archivos
-        uploadFile(process.env.BUCKETNAME, `./${req.file.filename}`, req.file.filename);
-        
-        const filePath = `./${req.file.filename}`;
-        io.emit('receiveImage', `https://boda-back.vercel.app/upload${filePath}`);
-        
-        res.status(200).json({ filePath });
-    } catch (error) {
-        console.error('Error al procesar la carga:', error);
-        res.status(500).send('Error interno del servidor');
+    if (!req.file) {
+        return res.status(400).send('No se ha subido ninguna foto.');
     }
+ 
+    uploadFile(process.env.BUCKETNAME,`./uploads/${req.file.filename}`,req.file.filename);
+
+    const filePath = `/uploads/${req.file.filename}`;
+    io.emit('receiveImage', `http://localhost:${PORT}${filePath}`);
+    
+    res.status(200).json({ filePath });
 });
+
 
 // Iniciar el servidor
 server.listen(PORT, () => {
