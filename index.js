@@ -117,12 +117,12 @@ io.on('connection', (socket) => {
 });
 
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('', express.static(path.join(__dirname, '')));
 
 // Configuración de multer para la carga de archivos
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, '');
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname)); // Agrega un timestamp al nombre del archivo
@@ -146,7 +146,7 @@ const upload = multer({ storage });
 // });
 
 
-const uploadd = multer({ dest: 'uploads/' }); // Configura la carpeta de destino
+const uploadd = multer({ dest: '' }); // Configura la carpeta de destino
 
 app.post('/upload', uploadd.single('photo'), (req, res) => {
     try {
@@ -155,7 +155,7 @@ app.post('/upload', uploadd.single('photo'), (req, res) => {
         }
 
         // Lógica para manejar la carga de archivos
-        uploadFile(process.env.BUCKETNAME, `/${req.file.filename}`, req.file.filename);
+        uploadFile(process.env.BUCKETNAME, `${req.file.filename}`, req.file.filename);
         
         const filePath = `${req.file.filename}`;
         io.emit('receiveImage', `https://boda-back.vercel.app/upload${filePath}`);
