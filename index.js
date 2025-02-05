@@ -146,15 +146,17 @@ const upload = multer({ storage });
 // });
 
 
-app.post('/upload', (req, res) => {
-    // Lógica para manejar la carga de archivos
+const uploadd = multer({ dest: 'uploads/' }); // Configura la carpeta de destino
+
+app.post('/upload', uploadd.single('photo'), (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).send('No se ha subido ninguna foto.');
         }
-     
-        uploadFile(process.env.BUCKETNAME,`/${req.file.filename}`,req.file.filename);
-    
+
+        // Lógica para manejar la carga de archivos
+        uploadFile(process.env.BUCKETNAME, `/${req.file.filename}`, req.file.filename);
+        
         const filePath = `${req.file.filename}`;
         io.emit('receiveImage', `https://boda-back.vercel.app/upload${filePath}`);
         
@@ -164,7 +166,6 @@ app.post('/upload', (req, res) => {
         res.status(500).send('Error interno del servidor');
     }
 });
-
 
 
 // Iniciar el servidor
