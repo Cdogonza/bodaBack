@@ -122,14 +122,17 @@ app.use('/', express.static(path.join(__dirname, './')));
 // Configuración de multer para la carga de archivos
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, '');
+        cb(null, '/');
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname)); // Agrega un timestamp al nombre del archivo
     },
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage: storage });
+// Configuración de multer
+
+
 
 // Endpoint para subir fotos
 // app.post('/upload', upload.single('photo'), (req, res) => {
@@ -145,8 +148,6 @@ const upload = multer({ storage });
 //     res.status(200).json({ filePath });
 // });
 
-
-const uploadd = multer({ dest: './' }); // Configura la carpeta de destino
 
 app.post('/upload', upload.single('photo'), (req, res) => {
     try {
@@ -166,7 +167,6 @@ app.post('/upload', upload.single('photo'), (req, res) => {
         res.status(500).send('Error interno del servidor');
     }
 });
-
 
 // Iniciar el servidor
 server.listen(PORT, () => {
