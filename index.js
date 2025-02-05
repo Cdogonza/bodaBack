@@ -157,6 +157,6 @@ app.post('/upload', upload.single('photo'), (req, res) => {
 
 // Iniciar el servidor
 server.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    console.log(`Servidor corriendo en boda-back.vercel.app`);
 });
 
