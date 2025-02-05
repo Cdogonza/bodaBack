@@ -161,10 +161,10 @@ app.post('/upload', (req, res) => {
             return res.status(400).send('No se ha subido ninguna foto.');
         }
      
-        uploadFile(process.env.BUCKETNAME,`${req.file.filename}`,req.file.filename);
+        uploadFile(process.env.BUCKETNAME,`/${req.file.filename}`,req.file.filename);
     
         const filePath = `${req.file.filename}`;
-        io.emit('receiveImage', `http://localhost:${PORT}${filePath}`);
+        io.emit('receiveImage', `https://boda-back.vercel.app/upload${filePath}`);
         
         res.status(200).json({ filePath });
     } catch (error) {
