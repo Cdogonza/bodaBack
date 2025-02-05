@@ -117,7 +117,7 @@ io.on('connection', (socket) => {
 });
 
 app.use(express.json());
-app.use('/', express.static(path.join(__dirname, '/')));
+app.use('/', express.static(path.join(__dirname, './')));
 
 // Configuración de multer para la carga de archivos
 const storage = multer.diskStorage({
@@ -146,7 +146,7 @@ const upload = multer({ storage });
 // });
 
 
-const uploadd = multer({ dest: '/' }); // Configura la carpeta de destino
+const uploadd = multer({ dest: './' }); // Configura la carpeta de destino
 
 app.post('/upload', upload.single('photo'), (req, res) => {
     try {
