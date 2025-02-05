@@ -117,7 +117,7 @@ io.on('connection', (socket) => {
 });
 
 app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, './uploads')));
+app.use('./uploads', express.static(path.join(__dirname, './uploads')));
 
 // Configuración de multer para la carga de archivos
 const storage = multer.diskStorage({
@@ -142,7 +142,7 @@ app.post('/upload', upload.single('photo'), (req, res) => {
  
     uploadFile(process.env.BUCKETNAME,`./uploads/${req.file.filename}`,req.file.filename);
 
-    const filePath = `/uploads/${req.file.filename}`;
+    const filePath = `./uploads/${req.file.filename}`;
     io.emit('receiveImage', `http://localhost:${PORT}${filePath}`);
     
     res.status(200).json({ filePath });
