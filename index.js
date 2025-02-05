@@ -161,9 +161,9 @@ app.post('/upload', (req, res) => {
             return res.status(400).send('No se ha subido ninguna foto.');
         }
      
-        uploadFile(process.env.BUCKETNAME,`./uploads/${req.file.filename}`,req.file.filename);
+        uploadFile(process.env.BUCKETNAME,`${req.file.filename}`,req.file.filename);
     
-        const filePath = `/uploads/${req.file.filename}`;
+        const filePath = `${req.file.filename}`;
         io.emit('receiveImage', `http://localhost:${PORT}${filePath}`);
         
         res.status(200).json({ filePath });
