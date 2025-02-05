@@ -95,17 +95,17 @@ const io = socketIo(server, {
 
 // Configuración de CORS para Express
 app.use(cors({
-    origin: 'https://powderblue-donkey-924959.hostingersite.com', // Cambia esto al origen de tu frontend
+    origin: 'https://powderblue-donkey-924959.hostingersite.com/', // Cambia esto al origen de tu frontend
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
     optionsSuccessStatus: 204 // Para navegadores antiguos
 }));
 
 // Configuración de Content Security Policy (CSP)
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval';"); // Ajusta según tus necesidades
-    next();
-});
+// app.use((req, res, next) => {
+//     res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval';"); // Ajusta según tus necesidades
+//     next();
+// });
 
 io.on('connection', (socket) => {
     console.log('New client connected');
@@ -157,6 +157,6 @@ app.post('/upload', upload.single('photo'), (req, res) => {
 
 // Iniciar el servidor
 server.listen(PORT, () => {
-    console.log(`Servidor corriendo en boda-back.vercel.app`);
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
 
