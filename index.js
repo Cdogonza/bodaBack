@@ -155,9 +155,9 @@ app.post('/upload', upload.single('photo'), (req, res) => {
         }
 
         // Lógica para manejar la carga de archivos
-        uploadFile(process.env.BUCKETNAME, `${req.file.filename}`, req.file.filename);
+        uploadFile(process.env.BUCKETNAME, `./${req.file.filename}`, req.file.filename);
         
-        const filePath = `${req.file.filename}`;
+        const filePath = `./${req.file.filename}`;
         io.emit('receiveImage', `https://boda-back.vercel.app/upload${filePath}`);
         
         res.status(200).json({ filePath });
