@@ -41,16 +41,8 @@ const bucketName = process.env.BUCKETNAME; // Reemplaza con tu nombre de bucket
 
 
 // Endpoint para obtener todas las fotos
-app.get('/photos', (req, res) => {
-    const uploadsDir = path.join(__dirname, 'uploads');
-
-    fs.readdir(uploadsDir, (err, files) => {
-        if (err) {
-            return res.status(500).send('Error al leer el directorio.');
-        }
-        const filePaths = files.map(file => `/uploads/${file}`);
-        res.status(200).json(filePaths);
-    });
+app.get('/a', (req, res) => {
+    console.log('hola');
 });
 
 app.get('/api/images', (req, res) => {
