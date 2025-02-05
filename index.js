@@ -42,7 +42,7 @@ const bucketName = process.env.BUCKETNAME; // Reemplaza con tu nombre de bucket
 
 // Endpoint para obtener todas las fotos
 app.get('/a', (req, res) => {
-    console.log('hola');
+    res.send('hola');
 });
 
 app.get('/api/images', (req, res) => {
