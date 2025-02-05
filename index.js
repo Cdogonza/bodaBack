@@ -140,21 +140,38 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // Endpoint para subir fotos
-app.post('/upload', upload.single('photo'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).send('No se ha subido ninguna foto.');
-    }
+// app.post('/upload', upload.single('photo'), (req, res) => {
+//     if (!req.file) {
+//         return res.status(400).send('No se ha subido ninguna foto.');
+//     }
  
-    uploadFile(process.env.BUCKETNAME,`./uploads/${req.file.filename}`,req.file.filename);
+//     uploadFile(process.env.BUCKETNAME,`./uploads/${req.file.filename}`,req.file.filename);
 
-    const filePath = `/uploads/${req.file.filename}`;
-    io.emit('receiveImage', `http://localhost:${PORT}${filePath}`);
+//     const filePath = `/uploads/${req.file.filename}`;
+//     io.emit('receiveImage', `http://localhost:${PORT}${filePath}`);
     
-    res.status(200).json({ filePath });
+//     res.status(200).json({ filePath });
+// });
+
+
+app.post('/upload', (req, res) => {
+    // Lógica para manejar la carga de archivos
+    try {
+        if (!req.file) {
+            return res.status(400).send('No se ha subido ninguna foto.');
+        }
+     
+        uploadFile(process.env.BUCKETNAME,`./uploads/${req.file.filename}`,req.file.filename);
+    
+        const filePath = `/uploads/${req.file.filename}`;
+        io.emit('receiveImage', `http://localhost:${PORT}${filePath}`);
+        
+        res.status(200).json({ filePath });
+    } catch (error) {
+        console.error('Error al procesar la carga:', error);
+        res.status(500).send('Error interno del servidor');
+    }
 });
-
-
-
 
 
 
