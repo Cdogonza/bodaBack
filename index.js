@@ -148,7 +148,7 @@ const upload = multer({ storage });
 
 const uploadd = multer({ dest: '' }); // Configura la carpeta de destino
 
-app.post('/upload', uploadd.single('photo'), (req, res) => {
+app.post('/upload', upload.single('photo'), (req, res) => {
     try {
         if (!req.file) {
             return res.status(400).send('No se ha subido ninguna foto.');
