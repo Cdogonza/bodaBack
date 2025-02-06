@@ -19,10 +19,16 @@
     credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
 });
 
-  
+const cors = require('cors');
+app.use(cors({
+    origin: '*',  // O reemplázalo con tu frontend
+    methods: ['GET', 'POST'],
+    credentials: true
+}));
+
   const io = socketIo(server, {
     cors: {
-        origin: 'https://powderblue-donkey-924959.hostingersite.com/', // Cambia esto al origen de tu frontend
+        origin: 'https://powderblue-donkey-924959.hostingersite.com', // Cambia esto al origen de tu frontend
         methods: ['GET', 'POST'],
         credentials: true // Si necesitas enviar cookies o encabezados de autorización
     }
