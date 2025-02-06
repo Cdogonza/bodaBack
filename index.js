@@ -19,12 +19,6 @@
     credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
 });
 
-const cors = require('cors');
-app.use(cors({
-    origin: '*',  // O reemplázalo con tu frontend
-    methods: ['GET', 'POST'],
-    credentials: true
-}));
 
   const io = socketIo(server, {
     cors: {
