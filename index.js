@@ -149,7 +149,7 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
 
         await uploadFile(process.env.BUCKETNAME, `./uploads/${req.file.filename}`, req.file.filename);
 
-        const filePath = `hhttps://boda-back.vercel.app/uploads/${req.file.filename}`; // Ajusta la URL
+        const filePath = `https://boda-back.vercel.app/uploads/${req.file.filename}`; // Ajusta la URL
         io.emit('receiveImage', filePath);
         
         res.status(200).json({ filePath });
