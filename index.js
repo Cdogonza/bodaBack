@@ -59,19 +59,18 @@ app.get('/api/images', (req, res) => {
 
 
 
-async function uploadFile(backetName,file,fileOutputName){ 
-    try{
- 
-        const bucket = storage2.bucket(backetName);
+async function uploadFile(bucketName, file, fileOutputName) { 
+    try {
+        const bucket = storage2.bucket(bucketName);
         const ret = await bucket.upload(file, {
             destination: fileOutputName,
         });
-return ret;
-    }catch(err){
-        console.log(err);
+        return ret;
+    } catch (err) {
+        console.error('Error al subir el archivo:', err);
+        throw new Error('Error al subir el archivo'); // Lanza un error para manejarlo en el endpoint
     }
 }
-
 
 
 // Configuración de CORS para Socket.IO
@@ -119,36 +118,45 @@ io.on('connection', (socket) => {
 app.use(express.json());
 app.use('./uploads', express.static(path.join(__dirname, './uploads')));
 
-// Configuración de multer para la carga de archivos
+
+const upload = multer({ storage: storage });
+// Configuración de multer
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, '/uploads');
+        cb(null, path.join(__dirname, 'uploads')); // Asegúrate de que esta carpeta exista
     },
     filename: (req, file, cb) => {
         cb(null, Date.now() + path.extname(file.originalname)); // Agrega un timestamp al nombre del archivo
     },
 });
 
-const upload = multer({ storage: storage });
-// Configuración de multer
+const fs = require('fs');
+
+// Asegúrate de que la carpeta uploads exista
+const uploadsDir = path.join(__dirname, 'uploads');
+if (!fs.existsSync(uploadsDir)) {
+    fs.mkdirSync(uploadsDir);
+}
 
 
 
-// Endpoint para subir fotos
-app.post('/upload', upload.single('photo'), (req, res) => {
-    if (!req.file) {
-        return res.status(400).send('No se ha subido ninguna foto.');
+app.post('/upload', upload.single('photo'), async (req, res) => {
+    try {
+        if (!req.file) {
+            return res.status(400).send('No se ha subido ninguna foto.');
+        }
+
+        await uploadFile(process.env.BUCKETNAME, `./uploads/${req.file.filename}`, req.file.filename);
+
+        const filePath = `hhttps://boda-back.vercel.app/uploads/${req.file.filename}`; // Ajusta la URL
+        io.emit('receiveImage', filePath);
+        
+        res.status(200).json({ filePath });
+    } catch (error) {
+        console.error('Error al procesar la carga:', error);
+        res.status(500).send('Error interno del servidor');
     }
- 
-    uploadFile(process.env.BUCKETNAME,`./uploads/${req.file.filename}`,req.file.filename);
-
-    const filePath = `./uploads/${req.file.filename}`;
-    io.emit('receiveImage', `http://localhost:${PORT}${filePath}`);
-    
-    res.status(200).json({ filePath });
 });
-
-
 // Iniciar el servidor
 server.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
