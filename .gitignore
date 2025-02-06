@@ -12,7 +12,7 @@ yarn-error.log*
 .env
 .env.local
 .env.*.local
-.coding_boda
+boda-
 # Build output
 dist/
 build/
