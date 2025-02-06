@@ -84,9 +84,6 @@ app.use((req, res, next) => {
   const upload = multer({
     storage: multer.memoryStorage(), // Almacena la imagen en memoria en lugar de en disco
 });
-
-  
-  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
   
   app.post('/upload', upload.single('photo'), async (req, res) => {
     try {
