@@ -15,7 +15,10 @@
   const { Storage } = require('@google-cloud/storage');
   const projectId = process.env.PROYECTID;
   const keyFilename = process.env.KEYFILENAME;
-  const storage2 = new Storage({ projectId, keyFilename });
+  const storage = new Storage({
+    credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
+});
+
   
   const io = socketIo(server, {
     cors: {
@@ -24,6 +27,13 @@
         credentials: true // Si necesitas enviar cookies o encabezados de autorización
     }
 });
+const corsOptions = {
+    origin: ['https://powderblue-donkey-924959.hostingersite.com', 'http://localhost:4200'],
+    methods: ['GET', 'POST'],
+    credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -47,16 +57,15 @@ app.use((req, res, next) => {
   
 
 
-async function uploadFile(bucketName, file, fileOutputName) { 
+  async function uploadFile(fileBuffer, fileName) {
     try {
-        const bucket = storage2.bucket(bucketName);
-        const ret = await bucket.upload(file, {
-            destination: fileOutputName,
-        });
-        return ret;
+        const bucket = storage.bucket(bucketName);
+        const file = bucket.file(fileName);
+        await file.save(fileBuffer);
+        return `https://storage.googleapis.com/${bucketName}/${fileName}`;
     } catch (err) {
         console.error('Error al subir el archivo:', err);
-        throw new Error('Error al subir el archivo'); // Lanza un error para manejarlo en el endpoint
+        throw new Error('Error al subir el archivo');
     }
 }
 
@@ -73,33 +82,25 @@ async function uploadFile(bucketName, file, fileOutputName) {
   });
   
   const upload = multer({
-      storage: multer.diskStorage({
-          destination: (req, file, cb) => {
-              cb(null, path.join(__dirname, 'uploads'));
-          },
-          filename: (req, file, cb) => {
-              cb(null, Date.now() + path.extname(file.originalname));
-          },
-      }),
-  });
+    storage: multer.memoryStorage(), // Almacena la imagen en memoria en lugar de en disco
+});
+
   
   app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
   
   app.post('/upload', upload.single('photo'), async (req, res) => {
-      try {
-          if (!req.file) {
-              return res.status(400).send('No se ha subido ninguna foto.');
-          }
-     //     const filePath = `http://localhost:3000/uploads/${req.file.filename}`;
-          const filePath = `https://powderblue-donkey-924959.hostingersite.com/uploads/${req.file.filename}`;
-          io.emit('receiveImage', filePath);
-          await uploadFile(process.env.BUCKETNAME, `./uploads/${req.file.filename}`, req.file.filename);
-          res.status(200).json({ filePath });
-      } catch (error) {
-          console.error('Error al procesar la carga:', error);
-          res.status(500).send('Error interno del servidor');
-      }
-  });
+    try {
+        if (!req.file) return res.status(400).json({ error: 'No se ha subido ninguna foto.' });
+
+        const cloudUrl = await uploadFile(req.file.buffer, req.file.originalname);
+
+        io.emit('receiveImage', cloudUrl);
+        res.json({ filePath: cloudUrl });
+    } catch (error) {
+        res.status(500).json({ error: 'Error al procesar la carga' });
+    }
+});
+
   
   // Iniciar el servidor
   server.listen(PORT, () => {
