@@ -9,9 +9,7 @@ const socketIo = require('socket.io');
 const app = express();
 const PORT = process.env.PORT || 3000;
 const server = http.createServer(app);
-const { randomInt } = require('crypto');
-const picture = '';
-const picName = randomInt(1000000000).toString();
+
 //CLAUD STORAGE
 const {Storage} = require('@google-cloud/storage');
 
@@ -38,7 +36,6 @@ async function listFiles(bucketName) {
     }
 }
 const bucketName = process.env.BUCKETNAME; // Reemplaza con tu nombre de bucket
-
 
 // Endpoint para obtener todas las fotos
 app.get('/a', (req, res) => {
@@ -147,11 +144,11 @@ app.post('/upload', upload.single('photo'), async (req, res) => {
             return res.status(400).send('No se ha subido ninguna foto.');
         }
 
-        await uploadFile(process.env.BUCKETNAME, `./uploads/${req.file.filename}`, req.file.filename);
+        
 
         const filePath = `https://boda-back.vercel.app/uploads/${req.file.filename}`; // Ajusta la URL
         io.emit('receiveImage', filePath);
-        
+        await uploadFile(process.env.BUCKETNAME, `./uploads/${req.file.filename}`, req.file.filename);
         res.status(200).json({ filePath });
     } catch (error) {
         console.error('Error al procesar la carga:', error);
