@@ -1,118 +1,107 @@
-const express = require('express');
-const multer = require('multer');
-const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
-const dotenv = require('dotenv');
-const http = require('http');
-const socketIo = require('socket.io');
-const { Storage } = require('@google-cloud/storage');
 
-dotenv.config();
-
-const app = express();
-const PORT = process.env.PORT || 3000;
-const server = http.createServer(app);
-const io = socketIo(server, {
+  const express = require('express');
+  const multer = require('multer');
+  const cors = require('cors');
+  const fs = require('fs');
+  const path = require('path');
+  require('dotenv').config();
+  const http = require('http');
+  const socketIo = require('socket.io');
+  const app = express();
+  const PORT = process.env.PORT || 3000;
+  const server = http.createServer(app);
+  
+  // Google Cloud Storage
+  const { Storage } = require('@google-cloud/storage');
+  const projectId = process.env.PROYECTID;
+  const keyFilename = process.env.KEYFILENAME;
+  const storage2 = new Storage({ projectId, keyFilename });
+  
+  const io = socketIo(server, {
     cors: {
-        origin: 'https://powderblue-donkey-924959.hostingersite.com', 
+        origin: 'https://powderblue-donkey-924959.hostingersite.com/', // Cambia esto al origen de tu frontend
         methods: ['GET', 'POST'],
-        credentials: true
+        credentials: true // Si necesitas enviar cookies o encabezados de autorización
     }
 });
 
-const projectId = process.env.PROYECTID;
-const keyFilename = process.env.KEYFILENAME;
-const bucketName = process.env.BUCKETNAME;
-const storage = new Storage({ projectId, keyFilename });
-const bucket = storage.bucket(bucketName);
+app.use((req, res, next) => {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
 
-// Middleware
-app.use(cors());
-app.use(express.json());
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+    next();
+  });
+  async function listFiles(bucketName) {
+      try {
+          const [files] = await storage2.bucket(bucketName).getFiles();
+          console.log(`Archivos en el bucket ${bucketName}:`);
+          return files.filter(file => file.name.endsWith('.jpg') || file.name.endsWith('.jpeg') || file.name.endsWith('.png'));
+      } catch (err) {
+          console.error('Error al listar archivos:', err);
+          return [];
+      }
+  }
+  
+  const bucketName = process.env.BUCKETNAME;
+  
 
-// Asegurar que la carpeta 'uploads' existe
-const uploadsDir = path.join(__dirname, 'uploads');
-if (!fs.existsSync(uploadsDir)) {
-    fs.mkdirSync(uploadsDir);
-}
 
-// Configuración de multer
-const upload = multer({
-    storage: multer.diskStorage({
-        destination: (req, file, cb) => {
-            cb(null, uploadsDir);
-        },
-        filename: (req, file, cb) => {
-            cb(null, Date.now() + path.extname(file.originalname));
-        },
-    }),
-});
-
-// Listar archivos en Google Cloud Storage
-async function listFiles() {
+async function uploadFile(bucketName, file, fileOutputName) { 
     try {
-        const [files] = await bucket.getFiles();
-        return files
-            .filter(file => /\.(jpg|jpeg|png)$/i.test(file.name))
-            .map(file => `https://storage.googleapis.com/${bucketName}/${file.name}`);
-    } catch (err) {
-        console.error('Error al listar archivos:', err);
-        return [];
-    }
-}
-
-// Endpoint para obtener imágenes
-app.get('/api/images', async (req, res) => {
-    try {
-        const images = await listFiles();
-        res.json(images);
-    } catch (error) {
-        res.status(500).json({ error: 'Error al obtener imágenes' });
-    }
-});
-
-// Subir archivo a Google Cloud Storage
-async function uploadFile(localFilePath, destination) {
-    try {
-        await bucket.upload(localFilePath, { destination });
-        return `https://storage.googleapis.com/${bucketName}/${destination}`;
+        const bucket = storage2.bucket(bucketName);
+        const ret = await bucket.upload(file, {
+            destination: fileOutputName,
+        });
+        return ret;
     } catch (err) {
         console.error('Error al subir el archivo:', err);
-        throw new Error('Error al subir el archivo');
+        throw new Error('Error al subir el archivo'); // Lanza un error para manejarlo en el endpoint
     }
 }
 
-// Subir imagen
-app.post('/upload', upload.single('photo'), async (req, res) => {
-    try {
-        if (!req.file) return res.status(400).json({ error: 'No se ha subido ninguna foto.' });
 
-        const localFilePath = path.join(uploadsDir, req.file.filename);
-        const cloudUrl = await uploadFile(localFilePath, req.file.filename);
-
-        io.emit('receiveImage', cloudUrl);
-        res.json({ filePath: cloudUrl });
-    } catch (error) {
-        res.status(500).json({ error: 'Error al procesar la carga' });
-    }
-});
-
-// WebSocket
-io.on('connection', (socket) => {
-    console.log('Nuevo cliente conectado');
-
-    socket.on('sendImage', (imageData) => {
-        io.emit('receiveImage', imageData);
-    });
-
-    socket.on('disconnect', () => {
-        console.log('Cliente desconectado');
-    });
-});
-
-// Iniciar el servidor
-server.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
-});
+  app.get('/api/images', async (req, res) => {
+      const imagesDir = path.join(__dirname, 'uploads');
+      try {
+          const files = await fs.promises.readdir(imagesDir);
+          const cloudFiles = await listFiles(bucketName);
+          res.json({ localFiles: files, cloudFiles });
+      } catch (err) {
+          return res.status(500).send('Error reading images directory');
+      }
+  });
+  
+  const upload = multer({
+      storage: multer.diskStorage({
+          destination: (req, file, cb) => {
+              cb(null, path.join(__dirname, 'uploads'));
+          },
+          filename: (req, file, cb) => {
+              cb(null, Date.now() + path.extname(file.originalname));
+          },
+      }),
+  });
+  
+  app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+  
+  app.post('/upload', upload.single('photo'), async (req, res) => {
+      try {
+          if (!req.file) {
+              return res.status(400).send('No se ha subido ninguna foto.');
+          }
+     //     const filePath = `http://localhost:3000/uploads/${req.file.filename}`;
+          const filePath = `https://powderblue-donkey-924959.hostingersite.com/uploads/${req.file.filename}`;
+          io.emit('receiveImage', filePath);
+          await uploadFile(process.env.BUCKETNAME, `./uploads/${req.file.filename}`, req.file.filename);
+          res.status(200).json({ filePath });
+      } catch (error) {
+          console.error('Error al procesar la carga:', error);
+          res.status(500).send('Error interno del servidor');
+      }
+  });
+  
+  // Iniciar el servidor
+  server.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+  });
