@@ -97,10 +97,10 @@ app.use((req, res, next) => {
     next();
   });
 // Configuración de Content Security Policy (CSP)
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval';"); // Ajusta según tus necesidades
-    next();
-});
+// app.use((req, res, next) => {
+//     res.setHeader("Content-Security-Policy", "script-src 'self' 'unsafe-eval';"); // Ajusta según tus necesidades
+//     next();
+// });
 
 io.on('connection', (socket) => {
     console.log('New client connected');
