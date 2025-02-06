@@ -74,20 +74,20 @@ async function uploadFile(bucketName, file, fileOutputName) {
 
 
 // Configuración de CORS para Socket.IO
-// const io = socketIo(server, {
-//     cors: {
-//         origin: 'https://powderblue-donkey-924959.hostingersite.com', // Cambia esto al origen de tu frontend
-//         methods: ['GET', 'POST'],
-//         credentials: true // Si necesitas enviar cookies o encabezados de autorización
-//     }
-// });
 const io = socketIo(server, {
     cors: {
-        origin: 'http://localhost:4200/', // Cambia esto al origen de tu frontend
+        origin: 'https://powderblue-donkey-924959.hostingersite.com', // Cambia esto al origen de tu frontend
         methods: ['GET', 'POST'],
         credentials: true // Si necesitas enviar cookies o encabezados de autorización
     }
 });
+// const io = socketIo(server, {
+//     cors: {
+//         origin: 'http://localhost:4200/', // Cambia esto al origen de tu frontend
+//         methods: ['GET', 'POST'],
+//         credentials: true // Si necesitas enviar cookies o encabezados de autorización
+//     }
+// });
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
