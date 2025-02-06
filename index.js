@@ -42,64 +42,37 @@ app.use((req, res, next) => {
 
     next();
   });
-  async function listFiles(bucketName) {
-      try {
-          const [files] = await storage2.bucket(bucketName).getFiles();
-          console.log(`Archivos en el bucket ${bucketName}:`);
-          return files.filter(file => file.name.endsWith('.jpg') || file.name.endsWith('.jpeg') || file.name.endsWith('.png'));
-      } catch (err) {
-          console.error('Error al listar archivos:', err);
-          return [];
-      }
-  }
   
+  
+  const upload = multer({ storage: multer.memoryStorage() });
+
   const bucketName = process.env.BUCKETNAME;
   
-
-
   async function uploadFile(fileBuffer, fileName) {
     try {
-        const bucket = storage.bucket(bucketName);
-        const file = bucket.file(fileName);
-        await file.save(fileBuffer);
-        return `https://storage.googleapis.com/${bucketName}/${fileName}`;
+      const bucket = storage.bucket(bucketName);
+      const file = bucket.file(fileName);
+      await file.save(fileBuffer);
+      return `https://storage.googleapis.com/${bucketName}/${fileName}`;
     } catch (err) {
-        console.error('Error al subir el archivo:', err);
-        throw new Error('Error al subir el archivo');
+      console.error('Error al subir el archivo:', err);
+      throw new Error('Error al subir el archivo');
     }
-}
-
-
-  app.get('/api/images', async (req, res) => {
-      const imagesDir = path.join(__dirname, 'uploads');
-      try {
-          const files = await fs.promises.readdir(imagesDir);
-          const cloudFiles = await listFiles(bucketName);
-          res.json({ localFiles: files, cloudFiles });
-      } catch (err) {
-          return res.status(500).send('Error reading images directory');
-      }
-  });
-  
-  const upload = multer({
-    storage: multer.memoryStorage(), // Almacena la imagen en memoria en lugar de en disco
-});
+  }
   
   app.post('/upload', upload.single('photo'), async (req, res) => {
     try {
-        if (!req.file) return res.status(400).json({ error: 'No se ha subido ninguna foto.' });
-
-        const cloudUrl = await uploadFile(req.file.buffer, req.file.originalname);
-
-        io.emit('receiveImage', cloudUrl);
-        res.json({ filePath: cloudUrl });
+      if (!req.file) return res.status(400).json({ error: 'No se ha subido ninguna foto.' });
+      const cloudUrl = await uploadFile(req.file.buffer, req.file.originalname);
+      res.json({ filePath: cloudUrl });
     } catch (error) {
-        res.status(500).json({ error: 'Error al procesar la carga' });
+      res.status(500).json({ error: 'Error al procesar la carga' });
     }
-});
-
-  
-  // Iniciar el servidor
-  server.listen(PORT, () => {
-      console.log(`Servidor corriendo en http://localhost:${PORT}`);
   });
+  
+  module.exports = app;
+  
+    server.listen(PORT, () => {
+        console.log(`Servidor escuchando en el puerto ${PORT}`);
+    });
+  
