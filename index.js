@@ -15,9 +15,14 @@
   const { Storage } = require('@google-cloud/storage');
   const projectId = process.env.PROYECTID;
   const keyFilename = process.env.KEYFILENAME;
-  const storage = new Storage({
-    credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
+//   const storage = new Storage({
+//     credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
+// });
+const storage = new Storage({
+    projectId: process.env.PROYECTID,
+    keyFilename: process.env.KEYFILENAME // Asegúrate de que el archivo existe en Render
 });
+
 
 
   const io = socketIo(server, {
@@ -27,13 +32,14 @@
         credentials: true // Si necesitas enviar cookies o encabezados de autorización
     }
 });
+app.use(cors(corsOptions));
 const corsOptions = {
     origin: ['https://powderblue-donkey-924959.hostingersite.com', 'http://localhost:4200'],
     methods: ['GET', 'POST'],
     credentials: true,
 };
 
-app.use(cors(corsOptions));
+
 
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
@@ -71,7 +77,7 @@ app.use((req, res, next) => {
   });
   
   module.exports = app;
-  
+
     server.listen(PORT, () => {
         console.log(`Servidor escuchando en el puerto ${PORT}`);
     });
