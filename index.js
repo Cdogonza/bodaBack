@@ -32,7 +32,7 @@
         credentials: true // Si necesitas enviar cookies o encabezados de autorización
     }
 });
-app.use(cors(corsOptions));
+
 const corsOptions = {
     origin: ['https://powderblue-donkey-924959.hostingersite.com', 'http://localhost:4200'],
     methods: ['GET', 'POST'],
@@ -40,7 +40,7 @@ const corsOptions = {
 };
 
 
-
+app.use(cors(corsOptions));
 app.use((req, res, next) => {
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
