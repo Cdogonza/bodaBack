@@ -16,6 +16,7 @@ boda-
 # Build output
 dist/
 build/
+coding_boda.json
 
 # IDEs and editors
 .vscode/
