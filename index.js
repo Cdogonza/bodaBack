@@ -15,9 +15,10 @@
   const { Storage } = require('@google-cloud/storage');
   const projectId = process.env.PROYECTID;
   const keyFilename = process.env.KEYFILENAME;
-  const storage = new Storage({
-    credentials: JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON),
-});
+  const credentials = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+  const storage = new Storage({ credentials });
+  
+
 // const storage = new Storage({
 //     projectId: process.env.PROYECTID,
 //     keyFilename: process.env.KEYFILENAME // Asegúrate de que el archivo existe en Render
@@ -39,6 +40,8 @@ const corsOptions = {
     credentials: true,
 };
 
+console.log("Project ID:", process.env.PROYECTID);
+console.log("Bucket Name:", process.env.BUCKETNAME);
 
 app.use(cors(corsOptions));
 app.use((req, res, next) => {
